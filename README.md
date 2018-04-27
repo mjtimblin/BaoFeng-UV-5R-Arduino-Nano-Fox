@@ -7,14 +7,13 @@ This project is adapted from Tim Giles's work ([https://github.com/timogiles/Ard
 - python3
 - python3-pip
 - arduino-core
-- libyaml-perl
-- arduino-sketch
+- ino
 
 <br><br>
 Ubuntu 16.04
 ```bash
-sudo apt install python3 python4-pip arduino-core libyaml-perl  
-sudo pip3 install arduino-sketch
+sudo apt install python3 python3-pip arduino-core  
+easy_install ino
 ```
 
 #### Instructions ####
