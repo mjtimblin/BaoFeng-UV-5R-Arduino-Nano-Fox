@@ -1,0 +1,586 @@
+#include "tones.h"
+
+char callsign[] = "%CALLSIGN%";
+unsigned long initialDelayDuration = %INITIAL_DELAY%;
+int numSongs = %NUM_SONGS%;
+unsigned long silence = %SILENCE_DURATION%;
+int wpm = %WPM%;
+
+char foxIdentification[] = " fox";
+int toneLength = 50;
+int dotLen = 1200 / wpm;             // length of the morse code 'dot'
+int dashLen = dotLen * 3;    // length of the morse code 'dash'
+int elemPause = dotLen;      // length of the pause between elements of a character
+int Spaces = dotLen * 3;     // length of the spaces between characters
+int wordPause = dotLen * 7;  // length of the pause between words
+int audioPin = 3;    // output audio on pin 3
+int pttPin = 4;     // control pttPin on pin 4
+int ledPin = 13;     // onboard LED
+int note = 800;      // audio tone frequency (Hz)
+
+void setup() 
+{                
+	pinMode(ledPin, OUTPUT); 
+	pinMode(pttPin, OUTPUT);   
+	digitalWrite(pttPin, HIGH);
+	delay(initialDelayDuration);
+}
+
+void loop()
+{     
+	digitalWrite(pttPin, LOW);
+	delay(250);
+
+	playSong(numSongs);
+	delay(500);
+
+	for (int i = 0; i < sizeof(callsign) - 1; i++)
+	{
+	char tmpChar = callsign[i];
+	tmpChar = toLowerCase(tmpChar);
+	TX_Morse(tmpChar);
+	MorseSpace(Spaces);
+	}
+
+	for (int i = 0; i < sizeof(foxIdentification) - 1; i++)
+	{
+	char tmpChar = foxIdentification[i];
+	tmpChar = toLowerCase(tmpChar);
+	TX_Morse(tmpChar);
+	MorseSpace(Spaces);
+	}
+
+	digitalWrite(pttPin, HIGH);
+	MorseSpace(1);			
+	delay(silence);
+}
+
+void playSong(int n)
+{
+	int extendedDelay = toneLength * 3;
+	for (int i = 0; i < n; i++)
+	{
+		delay(extendedDelay);
+		tone(audioPin, NOTE_DS5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_DS5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_FS4,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_FS4,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_FS4,toneLength);
+		delay(toneLength * 3);
+		tone(audioPin, NOTE_DS5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_DS5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_FS4,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_FS4,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_FS4,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_FS5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_FS5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_B4,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_B4,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_B4,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_FS5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_FS5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_B4,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_B4,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_B4,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_A5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_A5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_DS5,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_DS5,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_DS5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_A5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_A5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_DS5,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_DS5,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_DS5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_B5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_B5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_FS5,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_FS5,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_FS5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_B5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_B5,toneLength);
+		delay(extendedDelay);
+		tone(audioPin, NOTE_FS5,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_FS5,toneLength);
+		delay(toneLength);
+		tone(audioPin, NOTE_FS5,toneLength);
+	}
+}
+
+void MorseDot()
+{
+	digitalWrite(ledPin, HIGH);  	// turn the LED on 
+	tone(audioPin, note, dotLen);	// start playing a tone
+	delay(dotLen);             	// hold in this position
+}
+
+void MorseDash()
+{
+	digitalWrite(ledPin, HIGH);  	// turn the LED on 
+	tone(audioPin, note, dashLen);	// start playing a tone
+	delay(dashLen);               // hold in this position
+}
+
+void MorseSpace(int delayTime)
+{
+	digitalWrite(ledPin, LOW);    	// turn the LED off  	
+	noTone(audioPin);	       	// stop playing a tone
+	delay(delayTime);            	// hold in this position
+}
+
+void TX_Morse(char tmpChar)
+{
+	switch (tmpChar) 
+	{
+		case 'a':	
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case 'b':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 'c':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 'd':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 'e':
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 'f':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 'g':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 'h':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 'i':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 'j':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case 'k':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case 'l':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 'm':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case 'n':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 'o':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case 'p':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 'q':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case 'r':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 's':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case 't':
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case 'u':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case 'v':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case 'w':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case 'x':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case 'y':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case 'z':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case ' ':
+			MorseSpace(dotLen);
+			break;
+		case '1':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case '2':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case '3':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case '4':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		case '5':
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case '6':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case '7':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case '8':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case '9':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDot();
+			MorseSpace(elemPause);
+			break;
+		case '0':
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			MorseDash();
+			MorseSpace(elemPause);
+			break;
+		default: 
+			MorseSpace(Spaces);			
+	}
+}
+
+int Char2Int(char in)
+{
+	switch (in)
+	{
+		case '0':
+			return 0;
+			break;
+		case '1':
+			return 1;
+			break;
+		case '2':
+			return 2;
+			break;
+		case '3':
+			return 3;
+			break;
+		case '4':
+			return 4;
+			break;
+		case '5':
+			return 5;
+			break;
+		case '6':
+			return 6;
+			break;
+		case '7':
+			return 7;
+			break;
+		case '8':
+			return 8;
+			break;
+		case '9':
+			return 9;
+			break;
+		case 'a':
+			return 10;
+			break;
+		case 'b':
+			return 11;
+			break;
+		case 'c':
+			return 12;
+			break;
+		case 'd':
+			return 13;
+			break;
+		case 'e':
+			return 14;
+			break;
+		case 'f':
+			return 15;
+			break;
+		case 'A':
+			return 10;
+			break;
+		case 'B':
+			return 11;
+			break;
+		case 'C':
+			return 12;
+			break;
+		case 'D':
+			return 13;
+			break;
+		case 'E':
+			return 14;
+			break;
+		case 'F':
+			return 15;
+			break;
+	}
+}
