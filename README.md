@@ -20,5 +20,5 @@ easy_install ino
 To use the project, simple run the python script.
 ```bash
 cd BaoFeng-UV-5R-Arduino-Nano-Fox/src
-./fox.py
+./program-fox.py
 ```
