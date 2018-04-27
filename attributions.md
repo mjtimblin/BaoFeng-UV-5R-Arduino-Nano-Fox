@@ -4,6 +4,8 @@
     * Tim Giles (MIT), [https://github.com/timogiles/ArduFoxGPS](https://github.com/timogiles/ArduFoxGPS)
 * tones.h
     * Arduino, [https://www.arduino.cc/en/Tutorial/toneMelody](https://www.arduino.cc/en/Tutorial/toneMelody)
+* ino (command line tool)
+    * GitHub (MIT), [https://github.com/amperka/ino](https://github.com/amperka/ino)
 
 #### Hardware: ####
 * 3D Model
